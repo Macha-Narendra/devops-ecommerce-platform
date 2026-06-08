@@ -1,0 +1,64 @@
+version: "3.9"
+
+services:
+
+  postgres:
+
+    image: postgres:17
+
+    container_name: postgres
+
+    environment:
+      POSTGRES_DB: ecommerce
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Welcome123!
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+
+    image: redis:7
+
+    container_name: redis
+
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+
+  web:
+
+    build:
+      context: .
+
+    container_name: ecommerce-web
+
+    ports:
+      - "8000:8000"
+
+    environment:
+      SECRET_KEY: django-secret
+
+      DEBUG: "True"
+
+      DB_NAME: ecommerce
+      DB_USER: postgres
+      DB_PASSWORD: Welcome123!
+      DB_HOST: postgres
+      DB_PORT: 5432
+
+    depends_on:
+      - postgres
+      - redis
+
+volumes:
+  postgres_data:
