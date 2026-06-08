@@ -1,0 +1,16 @@
+If you want to set a password for the postgres database user
+
+Log in as the postgres OS user:
+sudo -u postgres psql
+
+ALTER USER postgres PASSWORD 'YourStrongPassword';
+
+On EC2
+
+A common pattern is:
+
+ubuntu@ec2-instance$ sudo -u postgres psql
+
+Now you can connect over TCP using a password:
+
+psql -U postgres -h localhost -W
